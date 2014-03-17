@@ -46,7 +46,6 @@ function hash(s)
   return str;
 }
 
-
 function writeRSSHeader(dst, page, doc, dt)
 {
   var desc = doc.querySelector("[class='fbLongBlurb']").innerText;
@@ -87,7 +86,7 @@ function writeItem(dst, link, dt, title, content)
     " <title>" + safe_tags(title) + "</title>" +
     " <description>" + safe_tags(content) + "</description>" +
     " <link>" + link + "</link>" +
-    " <guid>" + link + "?fb2h=" + hash(dt + title + content) + "</guid>" +
+    " <guid isPermaLink=\"false\">" + link + "#" + hash(dt + title + content) + "</guid>" +
     dstr +
     " </item>\n"
   );
