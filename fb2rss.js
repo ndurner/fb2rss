@@ -125,6 +125,7 @@ function saveRSS(url, destFN)
       var title = undefined;
       var content = undefined;
       var dt = undefined;
+      var url = undefined;
       
       var isActivity = article.querySelector("[class ~= 'timelineRecentActivityStory']");
       var dto = article.querySelector("abbr[data-utime]");
