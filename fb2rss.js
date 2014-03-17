@@ -138,7 +138,7 @@ function saveRSS(url, destFN)
         var dto = article.querySelector("abbr[data-utime]");
 
         if (dto)
-          dt = new Date(1000 * date.getAttribute("data-utime"));
+          dt = new Date(1000 * dto.getAttribute("data-utime"));
 
         title = name;
 
