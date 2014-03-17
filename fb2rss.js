@@ -144,6 +144,8 @@ function saveRSS(url, destFN)
         articleUrl = div.querySelector("a").getAttribute("href");
         if (articleUrl.substring(0, 32) === "http://www.facebook.com/l.php?u=")
           articleUrl = decodeURIComponent(url.substring(32, articleUrl.length));
+        else if (articleUrl.substring(0, 1) == "/")
+          articleUrl = "http://facebook.com" + articleUrl;
       }
       else {
         var userContent = article.querySelector("[class = 'userContent']");
