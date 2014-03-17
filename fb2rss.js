@@ -14,10 +14,6 @@ phantom.onError = function(msg, trace) {
     phantom.exit(1);
 };
 
-function safe_tags(str) {
-    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') ;
-}
-
 function hash(s)
 {
   var h = new Uint8Array(16);
@@ -83,10 +79,10 @@ function writeItem(dst, link, dt, title, content)
   
   dst.write(
     " <item>" +
-    " <title>" + safe_tags(title) + "</title>" +
-    " <description>" + safe_tags(content) + "</description>" +
-    " <link>" + link + "</link>" +
-    " <guid isPermaLink=\"false\">" + link + "#" + hash(dt + title + content) + "</guid>" +
+    " <title><![CDATA[" + title + "]]></title>" +
+    " <description><![CDATA[" + content + "]]></description>" +
+    " <link><![CDATA[" + link + "]]></link>" +
+    " <guid isPermaLink=\"false\"><![CDATA[" + link + "#" + hash(dt + title + content) + "]]></guid>" +
     dstr +
     " </item>\n"
   );
@@ -130,17 +126,27 @@ function saveRSS(url, destFN)
       var content = undefined;
       var dt = undefined;
       
-      if (false) {
+      var isActivity = article.querySelector("[class ~= 'timelineRecentActivityStory']");
+      var dto = article.querySelector("abbr[data-utime]");
+
+      title = name;
+
+      if (dto)
+        dt = new Date(1000 * dto.getAttribute("data-utime"));
+      
+      if (isActivity) {
+        var activity = article.querySelector("div[class ~= 'timelineRecentActivityStory']");
+        var div = activity.querySelector("div[class = 'fsl fcg']");
+        
+        title += ": " + div.innerText;
+        content = div.innerHTML;
+        url = div.querySelector("a").getAttribute("href");
+        if (url.substring(0, 32) === "http://www.facebook.com/l.php?u=")
+          url = decodeURIComponent(url.substring(32, url.length));
       }
       else {
         var userContent = article.querySelector("[class = 'userContent']");
         var pic = article.querySelector("[class ~= 'photo']");
-        var dto = article.querySelector("abbr[data-utime]");
-
-        if (dto)
-          dt = new Date(1000 * dto.getAttribute("data-utime"));
-
-        title = name;
 
         if (userContent) {
           content = userContent.innerHTML;
