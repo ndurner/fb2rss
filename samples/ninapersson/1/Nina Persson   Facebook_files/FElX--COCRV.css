@@ -1,0 +1,262 @@
+/*!CK:3078702934!*//*1394356989,178134569*/
+
+.fbTimelineFamilyGrid .familyPageHeaderLinkDiv{padding-top:8px}
+.fbTimelineFamilyGrid .familyPageHeaderLink{padding-top:8px}
+.fbTimelineFamilyGrid .familyList{padding-bottom:6px}
+.fbTimelineFamilyGrid .familyPager{padding-top:6px}
+.familyItemBody{padding:3px 0 0 3px}
+.fbTimelineFamilyGrid .familyPageHeaderLoader{position:relative;top:9px;right:9px}
+.fbTimelineFamilyGrid .familyItemBody .loader{padding-top:2px;padding-right:300px}
+.profileInfoSection{margin-bottom:30px}
+.profileInfoSection .emptyInfoSection{text-align:center;font-size:13px}
+.profileInfoSection .inlineLabel{color:#999}
+.profileInfoSection .privacyTooltip{padding-top:4px}
+.profileInfoTable .activateLink{padding-left:8px}
+.fbProfileExperience .experienceImageBlock{width:367px}
+.fbProfileExperience.editable{width:394px}
+.fbProfileExperience.editable .subexperiences, .fbProfileExperience.editable .subexperience{width:250px}
+.fbProfileExperience .subexperience.editable{position:relative}
+.fbProfileExperience .subexperience .removeSubexperience{position:absolute;right:0;top:0}
+.fbProfileExperience .hubPhoto{margin-right:7px}
+.fbProfileExperience .removeExperience, .fbProfileExperience .removeSubexperience{display:none}
+.fbProfileExperience:hover .removeExperience, .subexperience:hover .removeSubexperience{display:block}
+.fbProfileExperience .experienceContent{line-height:14px;padding-top:1px;width:100%;word-break:break-word}
+.fbProfileExperience .experienceTitle{font-weight:bold}
+.fbProfileExperience.editable .experienceContent{width:265px}
+.fbProfileExperience .experienceContentLarge{font-size:13px;font-weight:bold;line-height:30px;padding-top:22px;padding-left:8px}
+.fbProfileExperience .experienceBody, .fbProfileExperience .subexperienceContent{margin-top:2px}
+.fbProfileExperience .subexperiences{margin:6px 0 0 15px}
+.fbProfileExperience .subexperience{color:#333;padding-bottom:1px}
+.fbProfileExperience .subexperienceContent{width:273px}
+.fbProfileExperience.editable .subexperienceContent{width:235px}
+.showAllExperiences .revealerArrow{margin:0 0 2px 5px}
+.showAllExperiences:hover a, .showAllExperiences .mediaRevealer:hover{text-decoration:none}
+.profileInfoTable .highlight{background-color:#fffbe4}
+.profileInfoTable .fbProfileExperience.highlight{left:-5px;padding:5px 0 5px 5px;position:relative;top:-5px}
+.profileInfoTable .afterHighlight{margin-top:-10px}
+.profileInfoTable .highlight .complimentsBlingBox{margin-right:-5px}
+li.showAllExperiences{border-top:1px solid #e5eaf1;padding-top:7px;text-align:center}
+.showAllExperiences:hover{border-top-color:#d8dfea;background-color:#eceff4;cursor:pointer}
+.showAllExperiences a{display:inline-block;padding-bottom:8px}
+.fbProfileInfoExpandedRowWrapper .fbProfileExperience{text-align:left}
+.fbProfileInfoExpandedRowWrapper .revealerWrapper{margin-top:0}
+.fbProfileInfoWorkRowWrapper .fbProfileExperience{text-align:left}
+.fbProfileInfoEducationRowWrapper .fbProfileExperience{text-align:left}
+.profileHeader{margin-top:4px}
+.profileHeaderMain{width:513px}
+.profileHeaderMain h1{display:inline;margin-right:5px}
+.profileHeaderMain .profileHeaderButton{margin-right:5px;z-index:3}
+.profileHeaderMain #profile_connect{margin-left:0}
+.profileHeader .mainButtonSpan{display:inline-block;vertical-align:top}
+.profileHeader .subtitle{line-height:15px;padding-top:4px;width:490px}
+.profileHeader .profileActions{float:left;margin-top:3px}
+.profileHeader .addToMapForm{display:inline}
+.addToMapForm + .uiButton{margin-left:4px}
+.ginormousProfileName{color:#1c2a47;font-size:20px}
+.profileArrow{margin:0 5px 2px 6px}
+.profile-picture{background-color:#fff;display:block;overflow:hidden;position:relative;width:180px}
+.profile-picture:hover{text-decoration:none}
+.profile-picture:hover .edit_profilepicture{display:block}
+.profile-picture img{display:block;margin:auto;max-width:180px}
+.profile-picture span{background-color:#000;height:800px;position:absolute;top:0;right:0;width:1px;opacity:.30}
+.edit_profilepicture{background:#000;color:#fff;display:none;opacity:.7;padding:6px 7px 6px 23px;position:absolute;right:1px;top:0}
+.edit_profilepicture:hover{opacity:.95}
+span.edit_profilepicture_icon{background:url(/rsrc.php/v2/yA/r/QbfalTL4SQ2.png) no-repeat left 4px;height:18px;left:7px;opacity:.95;position:absolute;top:4px;width:18px}
+.profile-friends .profileFriendsText{overflow:hidden;text-overflow:ellipsis;width:102px;word-wrap:normal;white-space:nowrap}
+.profile-friends .profileFriendsByline{width:172px}
+.profileFriendsByline{white-space:nowrap}
+.profileFriendsNetwork{white-space:nowrap}
+.relationshipSection:hover .fbProfileNavHeaderEditButton{display:block}
+.relationshipSection .fbProfileNavHeaderEditButton{display:none}
+.profile-friends{margin:7px 6px 15px}
+.profile-friends li{margin-bottom:7px}
+.profile-friends-footer{border-top:1px solid #cdcdcd;padding:8px 10px 0 6px}
+.profile-friends-footer li:first-child{padding-top:0}
+div.profile-pagelet-section{margin-bottom:24px}
+.profile .fbx_profile_tab_loading{background:no-repeat url(/rsrc.php/v2/y9/r/jKEcVPZFk-2.gif) center center;padding:150px 0}
+.fbx .profileInfoTable th.label{padding-right:8px;width:81px}
+.fbx .fStatusOutgoing .addFriendText{display:none}
+._5gjr{width:400px}
+._5gjr ._5gjs{background-color:#fff;-webkit-border-radius:2px;bottom:4px;position:absolute;right:4px}
+._5gjr .experienceContent{color:#898f9c;font-size:13px;padding-left:8px}
+._5hzu{padding-bottom:3px}
+._5gjr .fbProfileBlankStateIcon .iconSpan{background-color:#eceff5;border:none;position:relative}
+._5gjr, ._5gjr:active, ._5gjr:hover{background-color:transparent;border:none}
+._5gjr .iconImage{top:22px}
+html ._5s80{margin-bottom:10px}
+html ._5nh3{border-color:#d3d6db;padding:8px;width:250px}
+html ._5s81 .DOMControl_placeholder{color:#adb2bb}
+html ._5s82{line-height:76px}
+html ._5s83 ._5s84{color:#141823;font-size:13px;font-weight:bold}
+html ._5s83 ._5s85{border-top:solid 1px #d9d9d9;margin-top:5px;padding-top:10px}
+html ._5tbd{color:#000;font-weight:normal;padding-left:5px}
+html ._5sj2 ._5nh3{margin-left:5px;margin-right:0;width:227px}
+html ._5sj3{float:left;padding-top:25px}
+html ._5sj2 ._5s84{border-bottom:solid 1px #d9d9d9;margin-bottom:5px;padding-bottom:5px}
+html ._5sj2 ._5s85{padding-left:23px}
+html ._5oov{width:256px}
+html .profileInfoTable ._5gt3 ._3sts{width:100px}
+.mediaRow .mediaPortrait{line-height:14px;padding:0;overflow:hidden;width:75px}
+.mediaRow .mediaPortrait .photo{height:75px;margin-bottom:5px}
+.mediaRow .mediaPortrait .mediaPageName{overflow:hidden;max-height:28px;word-wrap:break-word}
+.mediaRowWrapper{text-align:center}
+.mediaRowRevealer{line-height:12px}
+.mediaRow .profilePicContainer{height:100px;position:relative}
+.mediaRow .likeButtonContainer{left:-50px;position:absolute;text-align:center;top:41%;width:200px}
+.mediaRow .blackBackground{background-color:#333;height:100px;left:0;position:absolute;text-align:center;top:0;width:100px}
+.mediaRow .profilePicContainer .photo{height:100px;position:absolute}
+.mediaRow .profilePicContainer:hover .photo{opacity:.6}
+.mediaRow .profilePicContainer .likeButtonContainer{display:none}
+.mediaRow .profilePicContainer:hover .likeButtonContainer{display:block}
+.fbTimelineSection .profileInfoSection{margin-bottom:0;overflow:hidden}
+#pagelet_hometown .profileInfoTable{margin-bottom:5px}
+#pagelet_timeline_main_column #eduwork .uiInfoTable{margin:0 20px 15px 20px;width:auto}
+.fbTimelineEditEduWork{padding-bottom:15px}
+.fbTimelineEditEduWork .fbEditProfileExperienceSection{width:100%}
+.fbTimelineEditEduWork .dataRow .label{display:none}
+.fbTimelineEditEduWork .uiInfoTable .uiInfoTable .label{display:table-cell}
+.fbTimelineEditEduWork .addExperience{margin-left:20px}
+.fbTimelineEditEduWork .fbProfileEditExperiences{padding:0 20px 0}
+.fbTimelineEditEduWork .fbProfileEditExperiences .experience .profileImg{width:48px;height:48px}
+.fbTimelineEditEduWork .fbEditProfileSubexperiences{margin-bottom:0}
+.fbTimelineEditEduWork .fbEditProfileExperienceSection .audienceSelector{left:auto}
+.fbTimelineEditEduWork .fbProfileEditExperiences .experience .editTableWrapper{padding-right:15px}
+.fbTimelineEditEduWork .fbProfileEditExperiences .editExperienceForm textarea, .fbTimelineEditEduWork .fbProfileEditExperiences .editSubexperienceForm textarea{width:300px}
+.fbTimelineEditEduWork .fbEditProfileExperienceSection .subexperience{padding-left:27px}
+.fbTimelineEditEduWork .fbEditProfileExperienceSection .uiSelector{padding-right:18px}
+.fbTimelineSection .profileEditButton{opacity:0}
+#pagelet_relationships .blankState{margin-left:20px}
+._5e32{width:430px}
+._5e33{width:515px}
+._5e34{width:418px}
+._5e35{width:325px}
+.timelineLayout ._5e36 .profileInfoTable th.label{max-width:75px;min-width:40px;padding:0;width:auto}
+.timelineLayout ._5e36 .profileInfoTable th.noLabel{min-width:0;width:0}
+._5e37 .profileText{margin:10px 22px 20px}
+._5e38 .profileInfoTable{width:279px;word-wrap:break-word}
+._5e34 .profileInfoTable{width:376px}
+._5e34 .profileInfoTable td.data{max-width:310px;word-wrap:break-word}
+._5e37 .profileInfoTable hr{background:#eee}
+._5e37 .profileInfoTable .spacer td{padding:3px 0 1px}
+._5e37 .profileInfoTable .fbProfileBylineIcon{float:left}
+._5e35 .profileInfoTable .fbProfileBylineLabel{display:block;float:left;width:218px}
+._5e37 .profileInfoMap{padding:3px 0 0 3px}
+._5e37 .aboutMeCenterLine{border-bottom:0;border-left:0;border-top:0}
+._5e37 .experienceActions .uiCloseButton{margin-top:-1px}
+.fbTimelineEditEduWork .fbEditProfileExperienceSection
+._5e39{padding-right:0;top:58px}
+.fbTimelineEditEduWork .fbEditProfileExperienceSection .editExperienceForm
+._5e39{float:left;margin:0;margin-left:-60px;margin-right:4px;top:0;width:92px}
+html .editExperienceForm ._5e39
+.uiSelectorButton .uiButtonText{width:45px}
+._5e37 .fbTimelineSection .profileEditButton, .fbTimelineSection:hover .profileEditButton{opacity:1}
+._5e37 .contactInfoPhone{width:110px}
+html ._5gf7 ._5gf8{margin-top:6px}
+._5gf7 ._51iw{margin-top:4px}
+._5gf7 ._5gf9{padding:8px 0}
+.fbTimelineLoggedOutTopSection #fbProfileCover .coverNoImage{height:172px;position:relative}
+.fbTimelineLoggedOutTopSection #fbProfileCover .coverImage{margin-top:1px}
+.fbTimelineLoggedOutTopSection #fbTimelineHeadline{min-height:60px}
+.timelineLoggedOutMain{width:519px}
+.timelineLoggedOutMain .profileInfoTable{margin:10px 17px 20px 17px;width:auto}
+.timelineLoggedOutMain .profileText{margin-bottom:20px;margin-left:25px;margin-right:15px}
+.timelineLoggedOutMain .allFavorites{width:517px}
+.timelineLoggedOutMain .allFavorites
+.mediaRow .blackBackground{height:75px;width:75px}
+.timelineLoggedOutMain .allFavorites
+.mediaRow .likeButtonContainer{left:-63px;top:26px}
+.timelineLoggedOutMain .allFavorites .mediaRow .profilePicContainer .photo{left:0;position:absolute}
+.timelineLoggedOutMain .allFavorites
+.mediaRow .mediaPortrait{width:75px}
+.timelineLoggedOutMain .allFavorites
+.mediaRow .mediaPortrait .profilePicContainer{height:75px}
+.timelineLoggedOutMain .allFavorites
+.mediaRow .mediaPortrait .profilePicContainer .photo{height:75px;width:75px}
+.timelineLoggedOutMain .allFavorites .profileInfoTable{width:473px}
+.timelineLoggedOutMain .allFavorites .timelineFavorites .uiHeader{margin-left:15px}
+.timelineLoggedOutMain .allFavorites
+.uiInfoTable .labelContainer{background-color:#fff;color:#999;margin:0;padding-left:0;padding-right:10px;padding-top:0;text-align:left}
+.timelineLoggedOutMain .allFavorites
+.profileInfoTable .spacer{border-top:1px solid #d6dae7}
+.timelineLoggedOutRight{width:310px}
+.timelineLoggedOutRight .profileInfoTable{margin:10px 15px 20px;width:auto}
+.timelineLoggedOutRight .profile-friends{margin:10px 10px 20px 10px}
+.timelineLoggedOutRight .profile-friends .profileFriendsText{width:auto}
+.timelineLoggedOutRight .fbTimelineCompactSection .fbTimelineAboutMeHeader{margin-left:15px}
+.timelineLoggedOutRight .fbTimelineAboutMeHeader h3 a{color:#3b5998}
+.timelineLayout .timelineLoggedOutMain .profileInfoTable th.label,
+.timelineLayoutLoggedOut .timelineLoggedOutMain .profileInfoTable th.label{padding-right:0;width:75px}
+.timelineLayout .timelineLoggedOutMain #pagelet_hometown .profileInfoTable th.label,
+.timelineLayoutLoggedOut .timelineLoggedOutMain #pagelet_hometown .profileInfoTable th.label{width:0}
+.timelineLayoutLoggedOut #pagelet_timeline_main_column{position:relative}
+.timelineLayoutLoggedOut #rightCol,
+.timelineLayoutLoggedOutUserProfile .fbTimelineStickyHeader{display:none}
+.timelineLayoutLoggedOut #globalContainer{width:851px}
+.timelineLayoutLoggedOut .loggedout_menubar_container{min-width:851px}
+.timelineLayoutLoggedOut .loggedout_menubar{width:851px}
+.timelineLayout .timelineLoggedOutSignUp{position:absolute;right:18px;top:18px;min-width:244px;z-index:1}
+.timelineLoggedOutSignUp #pagelet_loggedout_sign_up .uiButton + .uiButton{margin-left:7px}
+.timelineLayout .timelineLoggedOutSignUpWithoutCover{position:absolute;right:1px;top:5px;min-width:244px;z-index:1}
+.timelineLoggedOutSignUpWithoutCover .uiButton + .uiButton{margin-left:7px}
+.timelineLayoutLoggedOutProfile .fbTimelineStickyHeader{top:0}
+.timelineLayoutLoggedOutProfile .fbTimelineStickyHeaderVisible.fixed_elem{position:static !important}
+.timelineLayout.timelineLayoutLoggedOut #pageFooter{margin:0 -30px;width:auto}
+html ._4q0{background:none;margin:-5px -12px 0;padding:0 10px 10px 10px}
+._4q0 .fbTimelineSection{border:0;border-bottom:1px solid #e5e5e5;-webkit-border-radius:0}
+._4q0 ._4_g3:last-child .fbTimelineSection{border-bottom:0}
+._4q0 ._4_g4 .fbTimelineSection{padding-right:8px}
+._4q0 ._4_g5 .fbTimelineSection{padding-left:8px}
+._4q0 > ._4_g4{border-right:1px solid #e5e5e5}
+._4q0 > ._4_g5{border-left:1px solid #e5e5e5;left:-1px;position:relative}
+._4q0 > ._4_g4, ._4q0 > ._4_g5{-webkit-box-sizing:border-box;width:50%}
+html ._4q0 .profileInfoTable .noLabel{min-width:0;width:0}
+._4q0 .fbTimelineSection .fbTimelineAboutMeHeader{margin:15px 10px}
+._4q0 .fbTimelineAboutMeHeader .uiHeaderTitle{color:#37404e;font:bold 16px 'Helvetica Neue', Helvetica, Arial, 'lucida grande',tahoma,verdana,arial,sans-serif;padding-left:0}
+._4q0 hr{visibility:hidden}
+._4q0 #pagelet_relationships .blankState{margin-left:10px}
+html ._4q0 .profileInfoTable .label, html ._4q0 .profileInfoTable ._3sts{color:#89919c;font-weight:normal}
+._4q0 .fbEditProfileExperienceSection .label{width:100px}
+._4q0 .fbTimelineEditEduWork .fbProfileEditExperiences .editExperienceForm textarea{width:220px}
+._4q0 .fbTimelineEditEduWork .fbProfileEditExperiences .editSubexperienceForm textarea{width:193px}
+._4q0 .profileInfoTable td.data{line-height:17px}
+._4q0 .fbTimelineAboutMeHeader .uiHeaderImage, ._4q0 #pagelet_hometown .spacer, ._4q0 #pagelet_eduwork .profileInfoTable .label, ._4q0 #pagelet_eduwork .profileInfoTable ._3sts{display:none}
+._4q0 ._3sts{padding-bottom:4px;padding-top:4px}
+._4q0 #pagelet_eduwork .mediaRowWrapper .uiList{padding-left:0}
+._4q0 #pagelet_eduwork .experienceTitle{font-size:13px;font-weight:bold}
+._4q0 .aboutSubtitle{margin-top:2px}
+._4q0 #pagelet_eduwork .experienceBody{margin-top:4px}
+._4q0 ._baj .fbTimelineAboutMeHeader, ._4q0 ._bak .fbTimelineAboutMeHeader{margin:15px 10px 5px}
+._4q0 .fbProfileExperience .hubPhoto{height:24px;width:24px}
+._4q0 .fbProfileExperience .experienceImageBlock{width:350px}
+._4q0 .experienceContent, ._4q0 .subexperienceContent{text-align:left;width:auto}
+._4q0 .fbEditProfileExperienceSection .addExperience{width:300px}
+._4q0 .uiMorePagerLoader, ._4q0 .uiMorePager .uiMorePagerPrimary{border:none;text-align:left}
+._4q0 .uiMorePager .uiMorePagerPrimary:hover{background:#f6f7f8}
+._4q0 .fbProfileInfoWorkRowWrapper .uiMorePager .uiMorePagerPrimary{padding-left:36px;width:338px}
+._4q0 .uiCollapsedListHidden .uiMorePager .uiMorePagerPrimary, ._4q0 #pagelet_hometown .uiCollapsedListHidden .uiMorePager .uiMorePagerPrimary{margin:0 5px 0 10px}
+._4q0 .uiCollapsedListHidden .uiMorePager .uiMorePagerPrimary{padding-left:118px}
+._4q0 #pagelet_relationships .uiMorePager .uiMorePagerPrimary, ._4q0 #pagelet_hometown .uiCollapsedListHidden .uiMorePager .uiMorePagerPrimary{padding-left:86px}
+._4q0 .familyPager .uiMorePagerPrimary{line-height:1}
+._4q0 ._58wm .edit{margin-right:41px}
+._4q0 ._58wm{width:403px}
+._4q0 .fbTimelineEditEduWork ._58wn{padding:0 75px 0 25px}
+._5mj_{color:#89919c;padding:4px 10px 0 0;width:50px}
+._5mk0{max-width:310px;padding:3px 0 10px}
+html ._5mk1{border-top:1px solid #e5e5e5;padding:10px 0;width:310px}
+._5mk2{margin-top:-13px}
+._5mjz .fbProfileBylineIcon{float:left}
+._5mjz .fbProfileBylineLabel{line-height:18px}
+.mediumFbProfileBlankIcon{width:50px;height:50px}
+.largeFbProfileBlankIcon{width:74px;height:74px}
+.fbProfileBlankStateIcon{background-color:#eceff5;border:1px solid #c5cde1}
+.fbProfileBlankStateIcon:hover{border:1px solid #9daccb}
+.fbProfileBlankStateIcon:active{background-color:#d8deeb;border:1px solid #9daccb}
+.fbProfileBlankStateIcon .iconSpan{border-top:1px solid #f2f4f8;border-bottom:1px solid #f6f7f9;text-align:center}
+.fbProfileBlankStateIcon .iconSpan:active{border-top:1px solid #cdd5e6;border-bottom:1px solid #f7f9fb}
+.fbProfileBlankStateIcon .iconImage{position:relative}
+.mediumFbProfileBlankIcon .iconImage{top:9px}
+.largeFbProfileBlankIcon .iconImage{top:21px}
+
+
+#bootloader_LFqi_ { height: 42px; }
+.bootloader_LFqi_ { display:block !important; }
