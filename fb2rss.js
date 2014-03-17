@@ -125,10 +125,10 @@ function saveRSS(url, destFN)
       var title = undefined;
       var content = undefined;
       var dt = undefined;
-      var url = undefined;
       
       var isActivity = article.querySelector("[class ~= 'timelineRecentActivityStory']");
       var dto = article.querySelector("abbr[data-utime]");
+      var articleUrl = url;
 
       title = name;
 
@@ -141,9 +141,9 @@ function saveRSS(url, destFN)
         
         title += ": " + div.innerText;
         content = div.innerHTML;
-        url = div.querySelector("a").getAttribute("href");
-        if (url.substring(0, 32) === "http://www.facebook.com/l.php?u=")
-          url = decodeURIComponent(url.substring(32, url.length));
+        articleUrl = div.querySelector("a").getAttribute("href");
+        if (articleUrl.substring(0, 32) === "http://www.facebook.com/l.php?u=")
+          articleUrl = decodeURIComponent(url.substring(32, articleUrl.length));
       }
       else {
         var userContent = article.querySelector("[class = 'userContent']");
@@ -159,11 +159,13 @@ function saveRSS(url, destFN)
 
           title += ": " + userContent.innerText;
         }
-        else
+        else {
           content = article.innerHTML;
+          title += ": " + article.innerText;
+        }
       }
       
-      writeItem(dst, url, dt, title, content);
+      writeItem(dst, articleUrl, dt, title, content);
     }
     
     writeRSSFooter(dst);
