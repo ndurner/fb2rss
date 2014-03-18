@@ -98,6 +98,9 @@ function saveRSS(url, destFN)
   
   console.log("opening " + url);
   page.open(url, function() {
+    var baseURL = page.url;
+    baseURL = baseURL.substring(0, baseURL.lastIndexOf("/"));
+    
     console.log("page opened");
     
     document.body.innerHTML = page.content;
@@ -143,10 +146,10 @@ function saveRSS(url, destFN)
         title += ": " + div.innerText;
         content = div.innerHTML;
         articleUrl = div.querySelector("a").getAttribute("href");
-        if (articleUrl.substring(0, 32) === "http://www.facebook.com/l.php?u=")
-          articleUrl = decodeURIComponent(url.substring(32, articleUrl.length));
+        if (articleUrl.substring(baseURL.length, baseURL.length + 8) === "l.php?u=")
+          articleUrl = decodeURIComponent(articleUrl.substring(baseURL.length + 8, articleUrl.length));
         else if (articleUrl.substring(0, 1) == "/")
-          articleUrl = "http://facebook.com" + articleUrl;
+          articleUrl = baseURL + articleUrl;
       }
       else {
         var userContent = article.querySelector("[class = 'userContent']");
