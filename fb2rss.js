@@ -156,8 +156,10 @@ function saveRSS(url, destFN)
           content = userContent.innerHTML;
           
           if (pic) {
-           pic = pic.querySelector("img[class ~= 'scaledImageFitWidth']");
-           content += "<div>" + pic.outerHTML + "</div>";
+            var innerPic = pic.querySelector("img[class ~= 'scaledImageFitWidth']");
+            if (!innerPic)
+              innerPic = pic;
+            content += "<div>" + innerPic.outerHTML + "</div>";
           }        
 
           title += ": " + userContent.innerText;
