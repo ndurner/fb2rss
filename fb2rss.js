@@ -2,7 +2,8 @@ var fs = require("fs");
 var system = require('system');
 var phantom = window.phantom;
 
-phantom.onError = function(msg, trace) {
+function errorHandler(msg, trace)
+{
     var msgStack = ['PHANTOM ERROR: ' + msg];
     if (trace && trace.length) {
         msgStack.push('TRACE:');
@@ -93,7 +94,7 @@ function saveRSS(url, destFN)
   var webpage = require("webpage");
   var page = webpage.create();
   
-//  webpage.settings.loadImages = false;
+  page.onError = errorHandler;
   
   console.log("opening " + url);
   page.open(url, function() {
@@ -187,6 +188,8 @@ function saveRSS(url, destFN)
   
   var url = args[1];
   var dest = args[2];
+  
+  phantom.onError = errorHandler;
   
   saveRSS(url, dest);
 }
