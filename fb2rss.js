@@ -53,10 +53,13 @@ function writeRSSHeader(dst, page, doc, dt)
     "<channel>" +
     " <title>" + page.title + "</title>" +
     " <description>" + desc + "</description>" +
-    " <link>" + page.url + "</link>" +
-    " <lastBuildDate>" + dt.toUTCString() + "</lastBuildDate>" +
-    " <pubDate>" + dt.toUTCString() + "</pubDate>\n"
+    " <link>" + page.url + "</link>"
   );
+  if (dt)
+    dst.write(
+      " <lastBuildDate>" + dt.toUTCString() + "</lastBuildDate>" +
+      " <pubDate>" + dt.toUTCString() + "</pubDate>\n"
+    );
 }
 
 function writeRSSFooter(dst)
@@ -113,11 +116,14 @@ function saveRSS(url, destFN)
     var articles = fb.querySelectorAll("[role='article']");
     var lastEntry;
     
-    if (articles) {
-      var date = fb.querySelector("abbr[data-utime]");
-      if (date) {
-        lastEntry = new Date(1000 * date.getAttribute("data-utime"));
-      }
+    if (!articles) {
+      console.log("Could not load articles\n");
+      phantom.exit(1);
+    }
+    
+    var date = fb.querySelector("abbr[data-utime]");
+    if (date) {
+      lastEntry = new Date(1000 * date.getAttribute("data-utime"));
     }
     
     writeRSSHeader(dst, page, fb, lastEntry);
@@ -153,10 +159,12 @@ function saveRSS(url, destFN)
       }
       else {
         var userContent = article.querySelector("[class = 'userContent']");
-        var pic = article.querySelector("[class ~= 'photo']");
 
         if (userContent) {
-          content = userContent.innerHTML;
+          var pic = article.querySelector("[class ~= 'photo']");
+          var sharedLink = article.querySelector("[class ~= 'shareLink']");
+          
+          content = "<div>" + userContent.innerHTML + "</div>";
           
           if (pic) {
             var innerPic = pic.querySelector("img[class ~= 'scaledImageFitWidth']");
@@ -164,6 +172,9 @@ function saveRSS(url, destFN)
               innerPic = pic;
             content += "<div>" + innerPic.outerHTML + "</div>";
           }        
+
+          if (sharedLink)
+            content += sharedLink.outerHTML;
 
           title += ": " + userContent.innerText;
         }
