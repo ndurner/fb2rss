@@ -12,7 +12,9 @@ function errorHandler(msg, trace)
         });
     }
     console.error(msgStack.join('\n'));
-    phantom.exit(1);
+    window.setTimeout(function() {
+      phantom.exit(1);
+    }, 500);
 };
 
 function hash(s)
