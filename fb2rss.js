@@ -158,7 +158,15 @@ function saveRSS(url, destFN)
       
       var isActivity = article.querySelector("[class ~= 'timelineRecentActivityStory']");
       var dto = article.querySelector("abbr[data-utime]");
-      var articleUrl = url;
+      var articleUrl = article.querySelector("a[class ~= 'uiLinkSubtle']");
+      
+      if (articleUrl) {
+        articleUrl = articleUrl.getAttribute("href");
+        if (articleUrl.substring(0, 1) == "/")
+          articleUrl = baseURL + articleUrl;
+      }
+      else
+        articleUrl = url;
 
       title = name;
 
