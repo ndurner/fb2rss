@@ -172,6 +172,19 @@ function saveRSS(url, destFN)
 
       if (dto)
         dt = new Date(1000 * dto.getAttribute("data-utime"));
+      else {
+        // look ahead to find an older article that does have a date set
+        for (var olderIdx = articleIdx + 1; olderIdx < articles.length; olderIdx++) {
+          dto = article.querySelector("abbr[data-utime]");
+          if (dto)
+            break;
+        }
+        
+        if (dto)
+          dt = new Date(1000 * dto.getAttribute("data-utime"));
+        else
+          dt = lastEntry;
+      }
       
       if (isActivity) {
         var activity = article.querySelector("div[class ~= 'timelineRecentActivityStory']");
