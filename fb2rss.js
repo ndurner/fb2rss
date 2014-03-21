@@ -106,7 +106,7 @@ function writeItem(dst, link, dt, title, content)
     " <title><![CDATA[" + title + "]]></title>" +
     " <description><![CDATA[" + content + "]]></description>" +
     " <link><![CDATA[" + link + "]]></link>" +
-    " <guid isPermaLink=\"false\"><![CDATA[" + link + "#" + hash(dt + title + content) + "]]></guid>" +
+    " <guid isPermaLink=\"false\"><![CDATA[" + link + "#" + hash(dt + title) + "]]></guid>" +
     dstr +
     " </item>\n"
   );
