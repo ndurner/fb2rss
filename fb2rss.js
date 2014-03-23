@@ -90,7 +90,7 @@ function writeRSSFooter(dst)
   );
 }
 
-function writeItem(dst, link, dt, title, content)
+function writeItem(dst, link, dt, title, content, guid)
 {
   var dstr;
   
@@ -106,7 +106,7 @@ function writeItem(dst, link, dt, title, content)
     " <title><![CDATA[" + title + "]]></title>" +
     " <description><![CDATA[" + content + "]]></description>" +
     " <link><![CDATA[" + link + "]]></link>" +
-    " <guid isPermaLink=\"false\"><![CDATA[" + link + "#" + hash(dt + title) + "]]></guid>" +
+    " <guid isPermaLink=\"false\"><![CDATA[" + guid + "]]></guid>" +
     dstr +
     " </item>\n"
   );
@@ -155,6 +155,7 @@ function saveRSS(url, destFN)
       var title = undefined;
       var content = undefined;
       var dt = undefined;
+      var guid = undefined;
       
       var isActivity = article.querySelector("[class ~= 'timelineRecentActivityStory']");
       var isByOthers = article.querySelector("div[class ~= 'timelinePageMostRecentLabel']");
@@ -168,6 +169,8 @@ function saveRSS(url, destFN)
         articleUrl = articleUrl.getAttribute("href");
         if (articleUrl.substring(0, 1) == "/")
           articleUrl = baseURL + articleUrl;
+          
+        guid = articleUrl;
       }
       else
         articleUrl = url;
@@ -224,7 +227,11 @@ function saveRSS(url, destFN)
         }
       }
       
-      writeItem(dst, articleUrl, dt, title, content);
+      // use content hash key as GUID if nothing else unique is available
+      if (!guid)
+        guid = hash(baseURL + title + dt);
+      
+      writeItem(dst, articleUrl, dt, title, content, guid);
     }
     
     writeRSSFooter(dst);
