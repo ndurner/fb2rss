@@ -196,11 +196,6 @@ function saveRSS(url, destFN)
         
         title += ": " + div.innerText;
         content = div.innerHTML;
-        articleUrl = div.querySelector("a").getAttribute("href");
-        if (articleUrl.substring(baseURL.length, baseURL.length + 8) === "l.php?u=")
-          articleUrl = decodeURIComponent(articleUrl.substring(baseURL.length + 8, articleUrl.length));
-        else if (articleUrl.substring(0, 1) == "/")
-          articleUrl = baseURL + articleUrl;
       }
       else {
         var userContent = article.querySelector("[class = 'userContent']");
