@@ -159,10 +159,13 @@ function saveRSS(url, destFN)
       
       var isActivity = article.querySelector("[class ~= 'timelineRecentActivityStory']");
       var isByOthers = article.querySelector("div[class ~= 'timelinePageMostRecentLabel']");
+      var isLikes = article.querySelector("div[class ~= 'timelinePageLikedPagesLabel']");
       var dto = article.querySelector("abbr[data-utime]");
       var articleUrl = article.querySelector("a[class ~= 'uiLinkSubtle']");
       
-      if (isByOthers)
+      /* ignore "what are other are saying" and this page's likes (sort order isn't fixed so
+         we would get that over and over again in the RSS without actual changes) */
+      if (isByOthers || isLikes)
         continue;
       
       if (articleUrl) {
