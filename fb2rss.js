@@ -65,7 +65,9 @@ function hash(s)
 
 function writeRSSHeader(dst, page, doc, dt)
 {
-  var desc = doc.querySelector("[class='fbLongBlurb']").innerText;
+  var desc = page.evaluate(function (s) {
+      return document.head.querySelector("meta[name='description']").getAttribute("content");
+    });  
   
   dst.write(
     "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" +
@@ -129,10 +131,15 @@ function saveRSS(url, destFN)
     document.body.innerHTML = page.content;
     var fb = document.body;
 
-    console.log("operating on page: " + fb.querySelector("[itemprop = 'name']").innerText);
+    console.log("operating on page: " + page.title);
+    page.render("fb2rss.jpg");
+    
+    var pageTitle = page.evaluate(function (s) {
+        return document.head.querySelector("meta[property='og:title']").getAttribute("content");
+      });
 
     var dst = fs.open(destFN, "w");
-    var name = fb.querySelector("[itemprop = 'name']").innerText;
+    var name = pageTitle;
     var articles = fb.querySelectorAll("[role='article']");
     var lastEntry;
     
