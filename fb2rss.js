@@ -123,131 +123,132 @@ function saveRSS(url, destFN)
   
   console.log("opening " + url);
   page.open(url, function() {
-    var baseURL = page.url;
-    baseURL = baseURL.substring(0, baseURL.lastIndexOf("/"));
-    
-    console.log("page opened");
-    
-    document.body.innerHTML = page.content;
-    var fb = document.body;
+    setTimeout(function() {
+      var baseURL = page.url;
+      baseURL = baseURL.substring(0, baseURL.lastIndexOf("/"));
+      
+      console.log("page opened");
+      
+      document.body.innerHTML = page.content;
+      var fb = document.body;
 
-    console.log("operating on page: " + page.title);
-    page.render("fb2rss.jpg");
-    
-    var pageTitle = page.evaluate(function (s) {
-        return document.head.querySelector("meta[property='og:title']").getAttribute("content");
-      });
+      console.log("operating on page: " + page.title);
+      
+      var pageTitle = page.evaluate(function (s) {
+          return document.head.querySelector("meta[property='og:title']").getAttribute("content");
+        });
 
-    var dst = fs.open(destFN, "w");
-    var name = pageTitle;
-    var articles = fb.querySelectorAll("[role='article']");
-    var lastEntry;
-    
-    if (!articles) {
-      console.log("Could not load articles\n");
-      phantom.exit(1);
-    }
-    
-    var date = fb.querySelector("abbr[data-utime]");
-    if (date) {
-      lastEntry = new Date(1000 * date.getAttribute("data-utime"));
-    }
-    
-    writeRSSHeader(dst, page, fb, lastEntry);
-    
-    console.log("articles: " + articles.length);
-    
-    for (var articleIdx = 0; articleIdx < articles.length; articleIdx++) {
-      var article = articles[articleIdx];
-      var title = undefined;
-      var content = undefined;
-      var dt = undefined;
-      var guid = undefined;
+      var dst = fs.open(destFN, "w");
+      var name = pageTitle;
+      var articles = fb.querySelectorAll("[role='article']");
+      var lastEntry;
       
-      var isActivity = article.querySelector("[class ~= 'timelineRecentActivityStory']");
-      var isByOthers = article.querySelector("div[class ~= 'timelinePageMostRecentLabel']");
-      var isLikes = article.querySelector("div[class ~= 'timelinePageLikedPagesLabel']");
-      var dto = article.querySelector("abbr[data-utime]");
-      var articleUrl = article.querySelector("a[class ~= 'uiLinkSubtle']");
-      
-      /* ignore "what are other are saying" and this page's likes (sort order isn't fixed so
-         we would get that over and over again in the RSS without actual changes) */
-      if (isByOthers || isLikes)
-        continue;
-      
-      if (articleUrl) {
-        articleUrl = articleUrl.getAttribute("href");
-        if (articleUrl.substring(0, 1) == "/")
-          articleUrl = baseURL + articleUrl;
-          
-        guid = articleUrl;
+      if (!articles) {
+        console.log("Could not load articles\n");
+        phantom.exit(1);
       }
-      else
-        articleUrl = url;
-
-      title = name;
-
-      if (dto)
-        dt = new Date(1000 * dto.getAttribute("data-utime"));
-      else {
-        // look ahead to find an older article that does have a date set
-        for (var olderIdx = articleIdx + 1; olderIdx < articles.length; olderIdx++) {
-          dto = article.querySelector("abbr[data-utime]");
-          if (dto)
-            break;
-        }
+      
+      var date = fb.querySelector("abbr[data-utime]");
+      if (date) {
+        lastEntry = new Date(1000 * date.getAttribute("data-utime"));
+      }
+      
+      writeRSSHeader(dst, page, fb, lastEntry);
+      
+      console.log("articles: " + articles.length);
+      
+      for (var articleIdx = 0; articleIdx < articles.length; articleIdx++) {
+        var article = articles[articleIdx];
+        var title = undefined;
+        var content = undefined;
+        var dt = undefined;
+        var guid = undefined;
         
+        var isActivity = article.querySelector("[class ~= 'timelineRecentActivityStory']");
+        var isByOthers = article.querySelector("div[class ~= 'timelinePageMostRecentLabel']");
+        var isLikes = article.querySelector("div[class ~= 'timelinePageLikedPagesLabel']");
+        var dto = article.querySelector("abbr[data-utime]");
+        var articleUrl = article.querySelector("a[class ~= 'uiLinkSubtle']");
+        
+        /* ignore "what are other are saying" and this page's likes (sort order isn't fixed so
+           we would get that over and over again in the RSS without actual changes) */
+        if (isByOthers || isLikes)
+          continue;
+        
+        if (articleUrl) {
+          articleUrl = articleUrl.getAttribute("href");
+          if (articleUrl.substring(0, 1) == "/")
+            articleUrl = baseURL + articleUrl;
+            
+          guid = articleUrl;
+        }
+        else
+          articleUrl = url;
+
+        title = name;
+
         if (dto)
           dt = new Date(1000 * dto.getAttribute("data-utime"));
-        else
-          dt = lastEntry;
-      }
-      
-      if (isActivity) {
-        var activity = article.querySelector("div[class ~= 'timelineRecentActivityStory']");
-        var div = activity.querySelector("div[class = 'fsl fcg']");
+        else {
+          // look ahead to find an older article that does have a date set
+          for (var olderIdx = articleIdx + 1; olderIdx < articles.length; olderIdx++) {
+            dto = article.querySelector("abbr[data-utime]");
+            if (dto)
+              break;
+          }
+          
+          if (dto)
+            dt = new Date(1000 * dto.getAttribute("data-utime"));
+          else
+            dt = lastEntry;
+        }
         
-        title += ": " + div.innerText;
-        content = div.innerHTML;
-      }
-      else {
-        var userContent = article.querySelector("[class = 'userContent']");
-
-        if (userContent) {
-          var pic = article.querySelector("[class ~= 'photo']");
-          var sharedLink = article.querySelector("[class ~= 'shareLink']");
+        if (isActivity) {
+          var activity = article.querySelector("div[class ~= 'timelineRecentActivityStory']");
+          var div = activity.querySelector("div[class = 'fsl fcg']");
           
-          content = "<div>" + userContent.innerHTML + "</div>";
-          
-          if (pic) {
-            var innerPic = pic.querySelector("img[class ~= 'scaledImageFitWidth']");
-            if (!innerPic)
-              innerPic = pic;
-            content += "<div>" + innerPic.outerHTML + "</div>";
-          }        
-
-          if (sharedLink)
-            content += sharedLink.outerHTML;
-
-          title += ": " + userContent.innerText;
+          title += ": " + div.innerText;
+          content = div.innerHTML;
         }
         else {
-          content = article.innerHTML;
-          title += ": " + article.innerText;
+          var userContent = article.querySelector("[class = 'userContent']");
+
+          if (userContent) {
+            var pic = article.querySelector("[class ~= 'photo']");
+            var sharedLink = article.querySelector("[class ~= 'shareLink']");
+            
+            content = "<div>" + userContent.innerHTML + "</div>";
+            
+            if (pic) {
+              var innerPic = pic.querySelector("img[class ~= 'scaledImageFitWidth']");
+              if (!innerPic)
+                innerPic = pic;
+              content += "<div>" + innerPic.outerHTML + "</div>";
+            }        
+
+            if (sharedLink)
+              content += sharedLink.outerHTML;
+
+            title += ": " + userContent.innerText;
+          }
+          else {
+            content = article.innerHTML;
+            title += ": " + article.innerText;
+          }
         }
+        
+        // use content hash key as GUID if nothing else unique is available
+        if (!guid)
+          guid = hash(baseURL + title + dt);
+        
+        writeItem(dst, articleUrl, dt, title, content, guid);
       }
       
-      // use content hash key as GUID if nothing else unique is available
-      if (!guid)
-        guid = hash(baseURL + title + dt);
-      
-      writeItem(dst, articleUrl, dt, title, content, guid);
-    }
-    
-    writeRSSFooter(dst);
+      writeRSSFooter(dst);
 
-    dst.close();
-    phantom.exit(0);  
+      dst.close();
+      phantom.exit(0);  
+    }, 15000);
   });
 }
 
