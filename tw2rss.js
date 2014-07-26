@@ -201,10 +201,14 @@ function saveRSS(url, destFN)
         if (userContent) {
           var txt = userContent.querySelector("[class ~= 'ProfileTweet-text']");
           var pic = article.querySelector("[class ~= 'TwitterPhoto-media']");
-          var rt = article.querySelector("[class ~= 'ProfileTweet-screenname']");
-
-          if (rt)
-            rt = "RT " + rt.textContent + ": ";
+          var isRT = article.querySelector("[class ~= 'js-retweet-text']");
+          var rt = "";
+                    
+          if (isRT) {
+            rt = article.querySelector("[class ~= 'ProfileTweet-originalAuthor']");
+            if (rt)
+              rt = "RT " + rt.querySelector("[class ~= 'ProfileTweet-screenname']").textContent + ": ";
+          }
 
           content = "<div>" + rt + txt.innerHTML + "</div>";
 
