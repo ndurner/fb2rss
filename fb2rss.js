@@ -169,7 +169,7 @@ function saveRSS(url, destFN)
         var guid = undefined;
 
         var articleUrl = document.evaluate("string(//abbr[name(..) = 'a']/../@href)", article).stringValue;
-        var dto = document.evaluate("string(//abbr[name(..) = 'a']/../@href)", article).stringValue;
+        var dto = document.evaluate("string(//abbr[name(..) = 'a']/../@data-utime)", article).stringValue;
 
         if (articleUrl) {
           if (articleUrl.substring(0, 1) == "/")
@@ -187,7 +187,7 @@ function saveRSS(url, destFN)
         else {
           // look ahead to find an older article that does have a date set
           for (var olderIdx = articleIdx + 1; olderIdx < articles.length; olderIdx++) {
-            dto = document.evaluate("string(//abbr[name(..) = 'a']/../@href)", article).stringValue;
+            dto = document.evaluate("string(//abbr[name(..) = 'a']/../@data-utime)", articles[olderIdx]).stringValue;
             if (dto)
               break;
           }
