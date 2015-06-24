@@ -140,7 +140,7 @@ function saveRSS(url, destFN)
 
       var dst = fs.open(destFN, "w");
       var name = pageTitle;
-      var articles = fb.querySelectorAll("[class ~='ProfileTweet']");
+      var articles = fb.querySelectorAll("li[data-item-type = 'tweet']");
       var lastEntry;
       
       if (!articles) {
@@ -164,7 +164,7 @@ function saveRSS(url, destFN)
         var dt = undefined;
         var guid = undefined;
         
-        var dto = article.querySelector("abbr[span-time]");
+        var dto = article.querySelector("span[data-time]");
         var articleUrl = article.querySelector("a[class ~= 'js-permalink']");
         
         if (articleUrl) {
@@ -184,7 +184,7 @@ function saveRSS(url, destFN)
         else {
           // look ahead to find an older article that does have a date set
           for (var olderIdx = articleIdx + 1; olderIdx < articles.length; olderIdx++) {
-            dto = article.querySelector("abbr[data-time]");
+            dto = article.querySelector("span[data-time]");
             if (dto)
               break;
           }
@@ -196,29 +196,36 @@ function saveRSS(url, destFN)
         }
         
         // read content
-        var userContent = article.querySelector("[class = 'ProfileTweet-contents']");
+        var userContent = article.querySelector("[class ~= 'tweet']");
 
         if (userContent) {
-          var txt = userContent.querySelector("[class ~= 'ProfileTweet-text']");
-          var pic = article.querySelector("[class ~= 'TwitterPhoto-media']");
+          var txt = userContent.querySelector("[class ~= 'tweet-text']");
+          var pic = article.querySelector("[data-card-type = 'photo']");
           var isRT = article.querySelector("[class ~= 'js-retweet-text']");
+          var isQT = article.querySelector("[class ~= 'QuoteTweet-authorAndText']");
           var rt = "";
                     
           if (isRT) {
-            rt = article.querySelector("[class ~= 'ProfileTweet-originalAuthor']");
-            if (rt)
-              rt = "RT " + rt.querySelector("[class ~= 'ProfileTweet-screenname']").textContent + ": ";
+            rt = article.querySelector("[class ~= 'username']");
+            if (rt) {
+              rt = "RT " + rt.textContent + ": ";
+            }
           }
 
           content = "<div>" + rt + txt.innerHTML + "</div>";
 
           if (pic) {
-            var innerPic = pic.querySelector("img[class ~= 'TwitterPhoto-mediaSource']");
+            var innerPic = pic.querySelector("img");
             if (!innerPic)
               innerPic = pic;
             content += "<div>" + innerPic.outerHTML + "</div>";
           }        
 
+          if (isQT) {
+            var qt = isQT.querySelector("[class ~= 'QuoteTweet-text']");
+            if (qt)
+              content += ("<div>" + qt.textContent + "</div>");
+          }
 
           title += ": " + rt + txt.textContent;
         }
