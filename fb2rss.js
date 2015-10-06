@@ -197,12 +197,21 @@ function saveRSS(url, destFN)
           else
             dt = lastEntry;
         }
+
+        // remove user comments
+        var comments;
+          
+        comments = article.querySelector("form");
+        if (comments)
+          comments.parentNode.removeChild(comments);
         
+        // extract content
         var userContent = article.querySelector("[class ~= 'userContent']");
         if (userContent)
           userContent = userContent.querySelector("p");
         
         content = article.innerHTML;
+                
         if (userContent)
           title += ": " + userContent.innerText;
         else
