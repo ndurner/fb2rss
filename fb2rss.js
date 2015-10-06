@@ -139,7 +139,7 @@ function saveRSS(url, destFN)
       }
       
       var pageTitle = page.evaluate(function (s) {
-          return document.head.querySelector("meta[property='og:title']").getAttribute("content");
+          return document.head.querySelector("title").text;
         });
 
       var dst = fs.open(destFN, "w");
