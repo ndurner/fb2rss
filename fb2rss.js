@@ -168,8 +168,8 @@ function saveRSS(url, destFN)
         var dt = undefined;
         var guid = undefined;
 
-        var articleUrl = document.evaluate("string(//abbr[name(..) = 'a']/../@href)", article).stringValue;
-        var dto = document.evaluate("string(//abbr[name(..) = 'a']/../@data-utime)", article).stringValue;
+        var articleUrl = (article.getElementsByTagName("abbr")[0]).parentNode.getAttribute("href");
+        var dto = (article.getElementsByTagName("abbr")[0]).parentNode.getAttribute("data-utime")
 
         if (articleUrl) {
           if (articleUrl.substring(0, 1) == "/")
