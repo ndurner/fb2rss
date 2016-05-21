@@ -35,11 +35,11 @@ var https = require('https');
 var url = require('url');
 
 exports.handler = function(event, context) {
-    var ec2 = new aws.EC2({ region: '&#x270D; <instance region here> &#x270D;' });
+    var ec2 = new aws.EC2({ region: '&#x270D; instance region here &#x270D;' });
 
     var params = {
         InstanceIds: [
-            '&#x270D; <instance-id-here> &#x270D;',
+            '&#x270D; instance-id-here &#x270D;',
         ],
         AdditionalInfo: '',
         DryRun: false
@@ -55,26 +55,26 @@ exports.handler = function(event, context) {
 </pre>    
       IAM role:
 <pre>
-                {
-                    "Version": "2012-10-17",
-                    "Statement": [
-                        {
-                            "Effect": "Allow",
-                            "Action": [
-                                "logs:CreateLogGroup",
-                                "logs:CreateLogStream",
-                                "logs:PutLogEvents"
-                            ],
-                            "Resource": "arn:aws:logs:*:*:*"
-                        },
-                        {
-                            "Effect": "Allow",
-                            "Action": [
-                                "ec2:StartInstances",
-                                "ec2:StopInstances"
-                            ],
-                            "Resource": "*"
-                        }
-                    ]
-                }
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+            ],
+            "Resource": "arn:aws:logs:*:*:*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ec2:StartInstances",
+                "ec2:StopInstances"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
 </pre>
