@@ -30,28 +30,28 @@ Notes
       
       Node.js script:
 <pre>
-                var aws = require('aws-sdk');
-                var https = require('https');
-                var url = require('url');
-                
-                exports.handler = function(event, context) {
-                    var ec2 = new aws.EC2({ region: '&#x1F449; <instance region here> &#x1F448;' });
-                
-                    var params = {
-                        InstanceIds: [
-                            '&#x1F449; <instance-id-here> &#x1F448;',
-                        ],
-                        AdditionalInfo: '',
-                        DryRun: false
-                    };
-                    
-                    ec2.startInstances(params, function(err, data) {
-                        if (err)
-                            console.log(err, err.stack);
-                        else
-                            console.log(data);
-                    });    
-                }
+var aws = require('aws-sdk');
+var https = require('https');
+var url = require('url');
+
+exports.handler = function(event, context) {
+    var ec2 = new aws.EC2({ region: '&#x270D; <instance region here> &#x270D;' });
+
+    var params = {
+        InstanceIds: [
+            '&#x270D; <instance-id-here> &#x270D;',
+        ],
+        AdditionalInfo: '',
+        DryRun: false
+    };
+    
+    ec2.startInstances(params, function(err, data) {
+        if (err)
+            console.log(err, err.stack);
+        else
+            console.log(data);
+    });    
+}
 </pre>    
       IAM role:
 <pre>
