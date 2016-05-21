@@ -29,6 +29,7 @@ Notes
     * EC2 instance starts can be scheduled cheaply through AWS Lambda.
       
       Node.js script:
+
                 var aws = require('aws-sdk');
                 var https = require('https');
                 var url = require('url');
@@ -53,6 +54,7 @@ Notes
                 }
     
       IAM role:
+
                 {
                     "Version": "2012-10-17",
                     "Statement": [
