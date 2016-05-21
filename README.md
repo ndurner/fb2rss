@@ -35,11 +35,11 @@ Notes
     var url = require('url');
 &nbsp;
 exports.handler = function(event, context) {
-var ec2 = new aws.EC2({ region: '&#x270D; instance region here &#x270D;' });
+        var ec2 = new aws.EC2({ region: '<big>&#x270D;</big> instance region here <big>&#x270D;</big>' });
         
         var params = {
             InstanceIds: [
-                '&#x270D; instance-id-here &#x270D;',
+                '<big>&#x270D;</big> instance-id-here <big>&#x270D;</big>',
             ],
             AdditionalInfo: '',
             DryRun: false
