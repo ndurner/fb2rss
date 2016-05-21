@@ -26,20 +26,20 @@ Notes
  * PhantomJS 2.x memory usage is excessive (> 4 GB), PhantomJS 1.9 works modestly
  * Running on AWS
     * EC2 t2.nano seems sufficient (for PhantomJS 1.9)
-    * EC2 instance starts can be scheduled cheaply through AWS Lambda. &#x1F534; &#9888;
+    * EC2 instance starts can be scheduled cheaply through AWS Lambda
       
       Node.js script:
-
+<pre>
                 var aws = require('aws-sdk');
                 var https = require('https');
                 var url = require('url');
                 
                 exports.handler = function(event, context) {
-                    var ec2 = new aws.EC2({ region: '&#x1F534; <instance region here> &#x1F534;' });
+                    var ec2 = new aws.EC2({ region: '&#x1F449; <instance region here> &#x1F448;' });
                 
                     var params = {
                         InstanceIds: [
-                            '&#x1F534; <instance-id-here> &#x1F534;',
+                            '&#x1F449; <instance-id-here> &#x1F448;',
                         ],
                         AdditionalInfo: '',
                         DryRun: false
@@ -52,9 +52,9 @@ Notes
                             console.log(data);
                     });    
                 }
-    
+</pre>    
       IAM role:
-
+<pre>
                 {
                     "Version": "2012-10-17",
                     "Statement": [
@@ -77,3 +77,4 @@ Notes
                         }
                     ]
                 }
+</pre>
