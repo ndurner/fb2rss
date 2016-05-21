@@ -22,7 +22,7 @@ Examples:
 
 Notes
 -----
- * Running this frequently (e.g. every hour) will entail an IP ban
+ * Running this frequently (e.g. every hour) will entail an IP address ban
  * PhantomJS 2.x memory usage is excessive (> 4 GB), PhantomJS 1.9 works modestly
  * Running on AWS
     * EC2 t2.nano seems sufficient (for PhantomJS 1.9)
