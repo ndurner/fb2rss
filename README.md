@@ -35,7 +35,7 @@ var https = require('https');
 var url = require('url');
 
 exports.handler = function(event, context) {
-    var ec2 = new aws.EC2({ region: '&#x270D; instance region here &#x270D;' });
+    var ec2 = new aws.EC2({ region: 'instance region here' });
     
     var params = {
         InstanceIds: [
