@@ -139,7 +139,7 @@ function saveRSS(url, destFN)
       }
       
       var pageTitle = page.evaluate(function (s) {
-          return document.head.querySelector("meta[property='og:title']").getAttribute("content");
+          return document.head.querySelector("title").text;
         });
 
       var dst = fs.open(destFN, "w");
@@ -168,8 +168,8 @@ function saveRSS(url, destFN)
         var dt = undefined;
         var guid = undefined;
 
-        var articleUrl = document.evaluate("string(//abbr[name(..) = 'a']/../@href)", article).stringValue;
-        var dto = document.evaluate("string(//abbr[name(..) = 'a']/../@data-utime)", article).stringValue;
+        var articleUrl = (article.getElementsByTagName("abbr")[0]).parentNode.getAttribute("href");
+        var dto = (article.getElementsByTagName("abbr")[0]).parentNode.getAttribute("data-utime")
 
         if (articleUrl) {
           if (articleUrl.substring(0, 1) == "/")
