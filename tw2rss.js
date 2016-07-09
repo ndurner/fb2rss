@@ -134,6 +134,11 @@ function saveRSS(url, destFN)
 
       console.log("operating on page: " + page.title);
       
+      if (document.body.childNodes.length == 0) {
+        console.log("Empty response. Consider updating PhantomJS.");
+        phantom.exit(1);
+      }
+      
       var pageTitle = page.evaluate(function (s) {
           return document.body.querySelector("h1[class ~= 'ProfileHeaderCard-name']").firstElementChild.text;
         });
