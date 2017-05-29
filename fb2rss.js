@@ -120,6 +120,7 @@ function saveRSS(url, destFN)
   var page = webpage.create();
   
   page.onError = errorHandler;
+  page.settings.userAgent = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.120 Safari/537.36';
   
   console.log("opening " + url);
   page.open(url, function() {
@@ -144,7 +145,7 @@ function saveRSS(url, destFN)
 
       var dst = fs.open(destFN, "w");
       var name = pageTitle;
-      var articles = fb.querySelectorAll("div[data-ft *= 'fbfeed']");
+      var articles = fb.querySelectorAll("div[class *= 'fbUserContent']");
       var lastEntry;
       
       if (!articles) {
