@@ -145,7 +145,7 @@ function saveRSS(url, destFN)
 
       var dst = fs.open(destFN, "w");
       var name = pageTitle;
-      var articles = fb.querySelectorAll("div[class *= 'fbUserContent']");
+      var articles = fb.querySelectorAll("div[role = 'article']");
       var lastEntry;
       
       if (!articles) {
