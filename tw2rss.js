@@ -205,7 +205,7 @@ function saveRSS(url, destFN)
 
         if (userContent) {
           var txt = userContent.querySelector("[class ~= 'tweet-text']");
-          var pic = article.querySelector("[data-card-type = 'photo']");
+          var pic = article.querySelector("[data-element-context = 'platform_photo_card']");
           var isRT = article.querySelector("[class ~= 'js-retweet-text']");
           var isQT = article.querySelector("[class ~= 'QuoteTweet-authorAndText']");
           var rt = "";
