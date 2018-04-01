@@ -107,7 +107,8 @@ async function saveRSS(url, destFN)
   await page.setViewport({width: 1920, height: 1050});
   
   console.log("opening " + url);
-  await page.goto(url, {waitUntil: 'networkidle2'});
+  await page.goto(url, {waitUntil: 'domcontentloaded'});
+  await page.waitFor("//div[contains(@role, 'article') and not(contains(@class, 'UFIRow'))]");
   
 	var baseURL = page.url();
 	baseURL = baseURL.substring(0, baseURL.lastIndexOf("/"));
