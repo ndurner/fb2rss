@@ -125,7 +125,7 @@ async function saveRSS(url, destFN)
     
     console.log("opening " + url);
     await page.goto(url, {waitUntil: 'domcontentloaded'});
-    await page.waitFor("//div[contains(@role, 'article') and not(contains(@class, 'UFIRow'))]");
+    await page.waitFor("//div[@data-fte='1']");
     
     var baseURL = page.url();
     baseURL = baseURL.substring(0, baseURL.lastIndexOf("/"));
@@ -144,7 +144,7 @@ async function saveRSS(url, destFN)
 
     var dst = fs.openSync(destFN, "w");
     var name = pageTitle;
-    var articles = await page.$$("div[role *= 'article']:not(.UFIRow)");
+    var articles = await page.$$("div[data-fte='1']");
     var lastEntry;
     
     if (!articles) {
