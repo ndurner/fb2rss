@@ -6,7 +6,8 @@ Turn public Facebook & Twitter timelines into RSS
 
 Prerequisites
 -------------
-* [PhantomJS](http://phantomjs.org/)
+* [PhantomJS](http://phantomjs.org/) (for Twitter)
+* [Puppeteer](https://github.com/GoogleChrome/puppeteer) (for Facebook)
 
 Usage
 -----

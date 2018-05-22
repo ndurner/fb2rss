@@ -1,6 +1,6 @@
 /*
     fb2rss.js - Turn public Facebook timelines into RSS
-    Copyright (C) 2014  Nils Durner
+    Copyright (C) 2014-2018  Nils Durner
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published by
@@ -16,24 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-var fs = require("fs");
-var system = require('system');
-var phantom = window.phantom;
-
-function errorHandler(msg, trace)
-{
-    var msgStack = ['PHANTOM ERROR: ' + msg];
-    if (trace && trace.length) {
-        msgStack.push('TRACE:');
-        trace.forEach(function(t) {
-            msgStack.push(' -> ' + (t.file || t.sourceURL) + ': ' + t.line + (t.function ? ' (in function ' + t.function + ')' : ''));
-        });
-    }
-    console.error(msgStack.join('\n'));
-    window.setTimeout(function() {
-      phantom.exit(1);
-    }, 500);
-};
+const fs = require('fs');
 
 function hash(s)
 {
@@ -63,188 +46,224 @@ function hash(s)
   return str;
 }
 
-function writeRSSHeader(dst, page, doc, dt)
+async function writeRSSHeader(dst, page, doc, dt)
 {
-  var desc = page.evaluate(function (s) {
-      return document.head.querySelector("meta[name='description']").getAttribute("content");
-    });  
-  
-  dst.write(
-    "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" +
-    "<rss version=\"2.0\">" +
-    "<channel>" +
-    " <title>" + page.title + "</title>" +
-    " <description>" + desc + "</description>" +
-    " <link>" + page.url + "</link>"
-  );
-  if (dt)
-    dst.write(
-      " <lastBuildDate>" + dt.toUTCString() + "</lastBuildDate>" +
-      " <pubDate>" + dt.toUTCString() + "</pubDate>\n"
+  try {
+    var desc = await page.evaluate(() => {
+  return document.querySelector("meta[name='description']").getAttribute("content");
+      });  
+    
+    fs.writeSync(dst,
+      "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" +
+      "<rss version=\"2.0\">" +
+      "<channel>" +
+      " <title>" + await page.title() + "</title>" +
+      " <description>" + desc + "</description>" +
+      " <link>" + page.url() + "</link>"
     );
+
+    if (dt)
+      fs.writeSync(dst,
+  " <lastBuildDate>" + dt.toUTCString() + "</lastBuildDate>" +
+  " <pubDate>" + dt.toUTCString() + "</pubDate>\n"
+      );
+  }
+  catch(error) {
+    console.error("writing RSS header failed: " + error);
+  }
 }
 
 function writeRSSFooter(dst)
 {
-  dst.write(
-    " </channel>" +
-    "</rss>"
-  );
+  try {
+    fs.writeSync(dst,
+      " </channel>" +
+      "</rss>"
+    );
+  }
+  catch(error) {
+    console.error("writing RSS footer failed: " + error);
+  }
 }
 
 function writeItem(dst, link, dt, title, content, guid)
 {
-  var dstr;
-  
-  if (dt)
-    dstr = " <pubDate>" + dt.toUTCString() + "</pubDate>";
-  else {
-    dstr = "";
-    console.log("no date: " + title);
+  try {
+    var dstr;
+    
+    if (dt)
+      dstr = " <pubDate>" + dt.toUTCString() + "</pubDate>";
+    else {
+      dstr = "";
+      console.log("no date: " + title);
+    }
+    
+    fs.writeSync(dst,
+      " <item>" +
+      " <title><![CDATA[" + title + "]]></title>" +
+      " <description><![CDATA[" + content + "]]></description>" +
+      " <link><![CDATA[" + link + "]]></link>" +
+      " <guid isPermaLink=\"false\"><![CDATA[" + guid + "]]></guid>" +
+      dstr +
+      " </item>\n"
+    );
   }
-  
-  dst.write(
-    " <item>" +
-    " <title><![CDATA[" + title + "]]></title>" +
-    " <description><![CDATA[" + content + "]]></description>" +
-    " <link><![CDATA[" + link + "]]></link>" +
-    " <guid isPermaLink=\"false\"><![CDATA[" + guid + "]]></guid>" +
-    dstr +
-    " </item>\n"
-  );
-}
-
-function saveRSS(url, destFN)
-{
-  var webpage = require("webpage");
-  var page = webpage.create();
-  
-  page.onError = errorHandler;
-  page.settings.userAgent = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.120 Safari/537.36';
-  
-  console.log("opening " + url);
-  page.open(url, function() {
-    setTimeout(function() {
-      var baseURL = page.url;
-      baseURL = baseURL.substring(0, baseURL.lastIndexOf("/"));
-      
-      console.log("page opened");
-      
-      document.body.innerHTML = page.content;
-      var fb = document.body;
-
-      console.log("operating on page: " + page.title);
-      if (page.title == '') {
-          console.log("empty page returned -- remember to run phantomjs with --ssl-protocol=any");
-          phantom.exit(1);
-      }
-      
-      var pageTitle = page.evaluate(function (s) {
-          return document.head.querySelector("title").text;
-        });
-
-      var dst = fs.open(destFN, "w");
-      var name = pageTitle;
-      var articles = fb.querySelectorAll("div[role = 'article']");
-      var lastEntry;
-      
-      if (!articles) {
-        console.log("Could not load articles\n");
-        phantom.exit(1);
-      }
-      
-      var date = fb.querySelector("abbr[data-utime]");
-      if (date) {
-        lastEntry = new Date(1000 * date.getAttribute("data-utime"));
-      }
-      
-      writeRSSHeader(dst, page, fb, lastEntry);
-      
-      console.log("articles: " + articles.length);
-      
-      for (var articleIdx = 0; articleIdx < articles.length; articleIdx++) {
-        var article = articles[articleIdx];
-        var title = undefined;
-        var content = undefined;
-        var dt = undefined;
-        var guid = undefined;
-
-        var articleUrl = (article.getElementsByTagName("abbr")[0]).parentNode.getAttribute("href");
-        var dto = (article.getElementsByTagName("abbr")[0]).parentNode.getAttribute("data-utime")
-
-        if (articleUrl) {
-          if (articleUrl.substring(0, 1) == "/")
-            articleUrl = baseURL + articleUrl;
-            
-          guid = articleUrl;
-        }
-        else
-          articleUrl = url;
-
-        title = name;
-        
-        if (dto)
-          dt = new Date(1000 * dto);
-        else {
-          // look ahead to find an older article that does have a date set
-          for (var olderIdx = articleIdx + 1; olderIdx < articles.length; olderIdx++) {
-            dto = document.evaluate("string(//abbr[name(..) = 'a']/../@data-utime)", articles[olderIdx]).stringValue;
-            if (dto)
-              break;
-          }
-          
-          if (dto)
-            dt = new Date(1000 * dto);
-          else
-            dt = lastEntry;
-        }
-
-        // remove user comments
-        var comments;
-          
-        comments = article.querySelector("form");
-        if (comments)
-          comments.parentNode.removeChild(comments);
-        
-        // extract content
-        var userContent = article.querySelector("[class ~= 'userContent']");
-        if (userContent)
-          userContent = userContent.querySelector("p");
-        
-        content = article.innerHTML;
-                
-        if (userContent)
-          title += ": " + userContent.innerText;
-        else
-          title = article.innerText;
-         
-        // use content hash key as GUID if nothing else unique is available
-        if (!guid)
-          guid = hash(baseURL + title + dt);
-        
-        writeItem(dst, articleUrl, dt, title, content, guid);
-      }
-      
-      writeRSSFooter(dst);
-
-      dst.close();
-      phantom.exit(0);  
-    }, 15000);
-  });
-}
-
-{
-  var args = system.args;
-  
-  if (args.length === 1) {
-    console.log('Usage: phantomjs fb2rss.js url destination.rss');
-    phantom.exit(1);
+  catch(error) {
+    console.error("writing RSS item failed: " + error);
+    process.exit(1);
   }
-  
-  var url = args[1];
-  var dest = args[2];
-  
-  phantom.onError = errorHandler;
-  
-  saveRSS(url, dest);
 }
+
+async function saveRSS(url, destFN)
+{
+  try {
+    const puppeteer = require('puppeteer');
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    
+    await page.setViewport({width: 1920, height: 1050});
+    
+    console.log("opening " + url);
+    await page.goto(url, {waitUntil: 'domcontentloaded'});
+    await page.waitFor("//div[@data-fte='1']");
+    
+    var baseURL = page.url();
+    baseURL = baseURL.substring(0, baseURL.lastIndexOf("/"));
+    
+    console.log("page opened");
+
+    const fb = await page.$('body');
+
+    const pageTitle = await page.title();
+    console.log("operating on page: " + pageTitle);
+    
+    if (pageTitle == '') {
+	console.log("empty page returned");
+	process.exit(1);
+    }
+
+    var dst = fs.openSync(destFN, "w");
+    var name = pageTitle;
+    var articles = await page.$$("div[data-fte='1']");
+    var lastEntry;
+    
+    if (!articles) {
+      console.log("Could not load articles\n");
+      process.exit(1);
+    }
+
+    var date = await page.evaluate(() => {
+      return document.querySelector("abbr[data-utime]").getAttribute("data-utime");
+    });
+    if (date) {
+      lastEntry = new Date(1000 * date);
+    }
+    
+    await writeRSSHeader(dst, page, fb, lastEntry);
+
+    console.log("articles: " + articles.length);
+    for (var articleIdx = 0; articleIdx < articles.length; articleIdx++) {
+      var article = articles[articleIdx];
+      var title = undefined;
+      var content = undefined;
+      var dt = undefined;
+      var guid = undefined;
+
+      var articleUrl = await page.evaluate(article => {
+	return (article.getElementsByTagName("abbr")[0]).parentNode.getAttribute("href");
+	}, article);
+      var dto = await page.evaluate(article => {
+	return (article.getElementsByTagName("abbr")[0]).getAttribute("data-utime");
+	}, article);
+
+      if (articleUrl) {
+	if (articleUrl.substring(0, 1) == "/")
+	  articleUrl = baseURL + articleUrl;
+	  
+	guid = articleUrl;
+      }
+      else
+	articleUrl = url;
+
+      title = name;
+      
+      if (dto)
+	dt = new Date(1000 * dto);
+      else {
+	// look ahead to find an older article that does have a date set
+	// FIXME
+	/*
+	for (var olderIdx = articleIdx + 1; olderIdx < articles.length; olderIdx++) {
+	  dto = document.evaluate("string(//abbr[name(..) = 'a']/../@data-utime)", articles[olderIdx]).stringValue;
+	  if (dto)
+	    break;
+	}
+	* */
+	console.log("FIXME: NO DATE");
+	
+	if (dto)
+	  dt = new Date(1000 * dto);
+	else
+	  dt = lastEntry;
+      }
+
+      // remove user comments
+      await page.evaluate(article => {
+	var comments = article.querySelector("form");
+	if (comments)
+	  comments.parentNode.removeChild(comments);
+      }, article);
+	  
+      // extract content
+      var userContent = await page.evaluate(article => {
+	var userContent = article.querySelector("[class ~= 'userContent']");
+	if (userContent)
+	  userContent = userContent.querySelector("p");
+	  
+	return userContent ? userContent.innerText : "";      
+      }, article);
+      
+      content = await page.evaluate(article => {
+	return {
+	    text: article.innerText,
+	    html: article.innerHTML
+	  };
+      }, article);
+      
+      if (userContent)
+	title += ": " + userContent;
+      else
+	title = content.text;
+       
+      // use content hash key as GUID if nothing else unique is available
+      if (!guid)
+	guid = hash(baseURL + title + dt);
+      
+      writeItem(dst, articleUrl, dt, title, content.html, guid);
+    }
+    
+    writeRSSFooter(dst);
+
+    fs.close(dst);
+    process.exit(0);
+  }
+  catch(error) {
+    console.error("saveRSS() failed: " + error);
+    process.exit(1);
+  }
+}
+
+(async () => {
+  if (process.argv.length < 4) {
+    console.log("Usage: nodejs fb2rss.js url destination.rss");
+    process.exit(1);
+  }
+
+  const puppeteer = require('puppeteer');
+  const browser = await puppeteer.launch();
+
+  var url = process.argv[2];
+  var dest = process.argv[3];
+  
+  return saveRSS(url, dest);
+})();
