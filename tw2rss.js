@@ -16,24 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-var fs = require("fs");
-var system = require('system');
-var phantom = window.phantom;
 
-function errorHandler(msg, trace)
-{
-    var msgStack = ['PHANTOM ERROR: ' + msg];
-    if (trace && trace.length) {
-        msgStack.push('TRACE:');
-        trace.forEach(function(t) {
-            msgStack.push(' -> ' + (t.file || t.sourceURL) + ': ' + t.line + (t.function ? ' (in function ' + t.function + ')' : ''));
-        });
-    }
-    console.error(msgStack.join('\n'));
-    window.setTimeout(function() {
-      phantom.exit(1);
-    }, 500);
-};
+const fs = require('fs');
 
 function hash(s)
 {
@@ -63,102 +47,119 @@ function hash(s)
   return str;
 }
 
-function writeRSSHeader(dst, page, doc, dt)
+async function writeRSSHeader(dst, page, dt)
 {
-  var desc = page.evaluate(function (s) {
-      return document.head.querySelector("meta[name='description']").getAttribute("content");
-    });  
-  
-  dst.write(
-    "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" +
-    "<rss version=\"2.0\">" +
-    "<channel>" +
-    " <title>" + page.title + "</title>" +
-    " <description>" + desc + "</description>" +
-    " <link>" + page.url + "</link>"
-  );
-  if (dt)
-    dst.write(
-      " <lastBuildDate>" + dt.toUTCString() + "</lastBuildDate>" +
-      " <pubDate>" + dt.toUTCString() + "</pubDate>\n"
+  try {
+    var desc = await page.evaluate(() => {
+  return document.querySelector("meta[name='description']").getAttribute("content");
+      });  
+    
+    fs.writeSync(dst,
+      "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" +
+      "<rss version=\"2.0\">" +
+      "<channel>" +
+      " <title>" + await page.title() + "</title>" +
+      " <description>" + desc + "</description>" +
+      " <link>" + page.url() + "</link>"
     );
+
+    if (dt)
+      fs.writeSync(dst,
+  " <lastBuildDate>" + dt.toUTCString() + "</lastBuildDate>" +
+  " <pubDate>" + dt.toUTCString() + "</pubDate>\n"
+      );
+  }
+  catch(error) {
+    console.error("writing RSS header failed: " + error);
+  }
 }
 
 function writeRSSFooter(dst)
 {
-  dst.write(
-    " </channel>" +
-    "</rss>"
-  );
+  try {
+    fs.writeSync(dst,
+      " </channel>" +
+      "</rss>"
+    );
+  }
+  catch(error) {
+    console.error("writing RSS footer failed: " + error);
+  }
 }
 
 function writeItem(dst, link, dt, title, content, guid)
 {
-  var dstr;
-  
-  if (dt)
-    dstr = " <pubDate>" + dt.toUTCString() + "</pubDate>";
-  else {
-    dstr = "";
-    console.log("no date: " + title);
+  try {
+    var dstr;
+    
+    if (dt)
+      dstr = " <pubDate>" + dt.toUTCString() + "</pubDate>";
+    else {
+      dstr = "";
+      console.log("no date: " + title);
+    }
+    
+    fs.writeSync(dst,
+      " <item>" +
+      " <title><![CDATA[" + title + "]]></title>" +
+      " <description><![CDATA[" + content + "]]></description>" +
+      " <link><![CDATA[" + link + "]]></link>" +
+      " <guid isPermaLink=\"false\"><![CDATA[" + guid + "]]></guid>" +
+      dstr +
+      " </item>\n"
+    );
   }
-  
-  dst.write(
-    " <item>" +
-    " <title><![CDATA[" + title + "]]></title>" +
-    " <description><![CDATA[" + content + "]]></description>" +
-    " <link><![CDATA[" + link + "]]></link>" +
-    " <guid isPermaLink=\"false\"><![CDATA[" + guid + "]]></guid>" +
-    dstr +
-    " </item>\n"
-  );
+  catch(error) {
+    console.error("writing RSS item failed: " + error);
+    process.exit(1);
+  }
 }
 
-function saveRSS(url, destFN)
+async function saveRSS(url, destFN)
 {
-  var webpage = require("webpage");
-  var page = webpage.create();
-  
-  page.onError = errorHandler;
-  
-  console.log("opening " + url);
-  page.open(url, function() {
-    setTimeout(function() {
-      var baseURL = page.url;
+  try {
+    const puppeteer = require('puppeteer');
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    
+    await page.setViewport({width: 1920, height: 1050});
+    
+    console.log("opening " + url);
+    await page.goto(url, {waitUntil: 'domcontentloaded'});
+	await page.waitFor("//li[@data-item-type = 'tweet']");
+	{
+      var baseURL = page.url();
       baseURL = baseURL.substring(0, baseURL.lastIndexOf("/"));
       
       console.log("page opened");
       
-      document.body.innerHTML = page.content;
-      var fb = document.body;
-
-      console.log("operating on page: " + page.title);
+      console.log("operating on page: " + await page.title());
       
-      if (document.body.childNodes.length == 0) {
-        console.log("Empty response. Consider updating PhantomJS.");
-        phantom.exit(1);
-      }
-      
-      var pageTitle = page.evaluate(function (s) {
+      var pageTitle = await page.evaluate(() => {
           return document.body.querySelector("h1[class ~= 'ProfileHeaderCard-name']").firstElementChild.text;
         });
 
-      var dst = fs.open(destFN, "w");
+      var dst = fs.openSync(destFN, "w");
       var name = pageTitle;
-      var articles = fb.querySelectorAll("li[data-item-type = 'tweet']");
+      var articles = await page.$x("//li[@data-item-type = 'tweet' and ../@class != 'activity-popup-users']");
       var lastEntry;
       
       if (!articles) {
         console.log("Could not load articles\n");
-        phantom.exit(1);
+        process.exit(1);
       }
       
-      var date = fb.querySelector("span[data-time]");
+      var date = await page.evaluate(() => {
+        var d = document.body.querySelector("span[data-time]");
+        if (d)
+            d = d.getAttribute("data-time");
+        return d;
+      });
       if (date) {
-        lastEntry = new Date(1000 * date.getAttribute("data-time"));
+        lastEntry = new Date(1000 * date);
       }
       
-      writeRSSHeader(dst, page, fb, lastEntry);
+      await writeRSSHeader(dst, page, lastEntry);
       
       console.log("articles: " + articles.length);
       
@@ -168,12 +169,21 @@ function saveRSS(url, destFN)
         var content = undefined;
         var dt = undefined;
         var guid = undefined;
-        
-        var dto = article.querySelector("span[data-time]");
-        var articleUrl = article.querySelector("a[class ~= 'js-permalink']");
-        
+
+        var dto = await page.evaluate(article => {
+            var d = article.querySelector("span[data-time]");
+            if (d)
+                d = d.getAttribute("data-time");
+            return d;
+        }, article);
+        var articleUrl = await page.evaluate(article => {
+            var a = article.querySelector("a[class ~= 'js-permalink']");
+            if (a)
+                a = a.getAttribute("href");
+            return a;
+        }, article);
+                
         if (articleUrl) {
-          articleUrl = articleUrl.getAttribute("href");
           if (articleUrl.substring(0, 1) == "/")
             articleUrl = baseURL + articleUrl;
             
@@ -185,54 +195,86 @@ function saveRSS(url, destFN)
         title = name;
 
         if (dto)
-          dt = new Date(1000 * dto.getAttribute("data-time"));
+          dt = new Date(1000 * dto);
         else {
           // look ahead to find an older article that does have a date set
+		  // FIXME
+		  /*
           for (var olderIdx = articleIdx + 1; olderIdx < articles.length; olderIdx++) {
             dto = article.querySelector("span[data-time]");
             if (dto)
               break;
           }
+		  */
+		  	console.log("FIXME: NO DATE");
           
           if (dto)
-            dt = new Date(1000 * dto.getAttribute("data-time"));
+            dt = new Date(1000 * dto);
           else
             dt = lastEntry;
         }
         
         // read content
-        var userContent = article.querySelector("[class ~= 'tweet']");
+	var userContent = await page.evaluate(article => {
+            return article.querySelector("[class ~= 'tweet']");
+        }, article);
 
         if (userContent) {
-          var txt = userContent.querySelector("[class ~= 'tweet-text']");
-          var pic = article.querySelector("[data-element-context = 'platform_photo_card']");
-          var isRT = article.querySelector("[class ~= 'js-retweet-text']");
-          var isQT = article.querySelector("[class ~= 'QuoteTweet-authorAndText']");
-          var rt = "";
+            var txtHTML = await page.evaluate(article => {
+                var t = article.querySelector("[class ~= 'tweet-text']");
+                if (t)
+                    t = t.innerHTML;
+                return t;
+            }, article);
+            var txt = await page.evaluate(article => {
+                var t = article.querySelector("[class ~= 'tweet-text']");
+                if (t)
+                    t = t.textContent;
+                return t;
+            }, article);
+
+            var pic = await page.evaluate(article => {
+                var p = article.querySelector("[data-element-context = 'platform_photo_card']");
+                if (p) {
+                    var inner = p.querySelector("img");
+                    if (inner)
+                        p = inner;
+                }
+                return p ? p.outerHTML : null;
+            }, article);
+
+            var isRT = await page.evaluate(article => {
+                return article.querySelector("[class ~= 'js-retweet-text']");
+            }, article);
+            var isQT = await page.evaluate(article => {
+                return article.querySelector("[class ~= 'QuoteTweet-authorAndText']");
+            }, article);
+            var rt = "";
                     
-          if (isRT) {
-            rt = article.querySelector("[class ~= 'username']");
-            if (rt) {
-              rt = "RT " + rt.textContent + ": ";
+            if (isRT) {
+               rt = await page.evaluate(article => {
+                   var r = article.querySelector("[class ~= 'username']");
+                   if (r)
+                       r = "RT " + r.textContent + ": ";
+                   return r;
+               }, article);
             }
-          }
 
-          content = "<div>" + rt + txt.innerHTML + "</div>";
+          content = "<div>" + rt + txt + "</div>";
 
-          if (pic) {
-            var innerPic = pic.querySelector("img");
-            if (!innerPic)
-              innerPic = pic;
-            content += "<div>" + innerPic.outerHTML + "</div>";
-          }        
+          if (pic)
+            content += "<div>" + pic + "</div>";
 
           if (isQT) {
-            var qt = isQT.querySelector("[class ~= 'QuoteTweet-text']");
+            var qt = await page.evaluate(article => {
+                return article.querySelector("[class ~= 'QuoteTweet-text']");
+            }, article);
+
             if (qt)
               content += ("<div>" + qt.textContent + "</div>");
           }
 
-          title += ": " + rt + txt.textContent;
+          title += ": " + rt + txt;
         }
         
         // use content hash key as GUID if nothing else unique is available
@@ -244,24 +286,27 @@ function saveRSS(url, destFN)
       
       writeRSSFooter(dst);
 
-      dst.close();
-      phantom.exit(0);  
-    }, 1500);
-  });
+      fs.close(dst);
+      process.exit(0);
+    }
+  }
+  catch(error) {
+    console.error("saveRSS() failed: " + error.stack);
+    process.exit(1);
+  }
 }
 
-{
-  var args = system.args;
-  
-  if (args.length === 1) {
-    console.log('Usage: phantomjs tw2rss.js url destination.rss');
-    phantom.exit(1);
+(async () => {
+  if (process.argv.length < 4) {
+    console.log("Usage: nodejs tw2rss.js url destination.rss");
+    process.exit(1);
   }
+
+  const puppeteer = require('puppeteer');
+  const browser = await puppeteer.launch();
+
+  var url = process.argv[2];
+  var dest = process.argv[3];
   
-  var url = args[1];
-  var dest = args[2];
-  
-  phantom.onError = errorHandler;
-  
-  saveRSS(url, dest);
-}
+  return saveRSS(url, dest);
+})();
