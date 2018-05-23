@@ -23,6 +23,7 @@ Examples:
 Notes
 -----
  * Running this frequently (e.g. every hour) will entail an IP address ban
+ * only the first batch of content is saved currently (~ 20 posts)
  * Running on AWS
     * EC2 t2.nano seems sufficient
     * EC2 instance starts can be scheduled cheaply through AWS Lambda
