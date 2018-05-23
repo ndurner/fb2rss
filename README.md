@@ -6,27 +6,25 @@ Turn public Facebook & Twitter timelines into RSS
 
 Prerequisites
 -------------
-* [PhantomJS](http://phantomjs.org/) (for Twitter)
-* [Puppeteer](https://github.com/GoogleChrome/puppeteer) (for Facebook)
+* [Puppeteer](https://github.com/GoogleChrome/puppeteer)
 
 Usage
 -----
 Invocation:
 
-    phantomjs [phantomjs option]... SCRIPT URL OUTPUTFILE
+    node SCRIPT URL OUTPUTFILE
 
 Examples:
 
-    $ phantomjs --ssl-protocol=any fb2rss/tw2rss.js https://twitter.com/ndurner ndurner.rss
+    $ node fb2rss/tw2rss.js https://twitter.com/ndurner ndurner.rss
 
-    $ phantomjs --ssl-protocol=any fb2rss/fb2rss.js https://de-de.facebook.com/diezeit diezeit.rss
+    $ node fb2rss/fb2rss.js https://de-de.facebook.com/diezeit diezeit.rss
 
 Notes
 -----
  * Running this frequently (e.g. every hour) will entail an IP address ban
- * PhantomJS 2.x memory usage is excessive (> 4 GB), PhantomJS 1.9 works modestly
  * Running on AWS
-    * EC2 t2.nano seems sufficient (for PhantomJS 1.9)
+    * EC2 t2.nano seems sufficient
     * EC2 instance starts can be scheduled cheaply through AWS Lambda
       
       Node.js script:
