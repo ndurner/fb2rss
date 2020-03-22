@@ -244,7 +244,7 @@ async function saveRSS(url, destFN)
     
     writeRSSFooter(dst);
 
-    fs.close(dst);
+    fs.close(dst, fu => {});
     process.exit(0);
   }
   catch(error) {
