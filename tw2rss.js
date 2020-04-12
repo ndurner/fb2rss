@@ -51,14 +51,14 @@ async function writeRSSHeader(dst, page, dt)
 {
   try {
     var desc = await page.evaluate(() => {
-  return document.querySelector("meta[name='description']").getAttribute("content");
+  return document.querySelector("div[data-testid='UserDescription']").textContent;
       });  
     
     fs.writeSync(dst,
       "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" +
       "<rss version=\"2.0\">" +
       "<channel>" +
-      " <title>" + await page.title() + "</title>" +
+      " <title><![CDATA[" + await page.title() + "]]></title>" +
       " <description>" + desc + "</description>" +
       " <link>" + page.url() + "</link>"
     );
@@ -122,11 +122,16 @@ async function saveRSS(url, destFN)
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     
-    await page.setViewport({width: 1920, height: 1050});
+    page.on('console', msg => {
+		for (let i = 0; i < msg.args().length; ++i)
+			console.log(`${i}: ${msg.args()[i]}`);
+	});
+    
+    await page.setViewport({width: 6016, height: 3384});
     
     console.log("opening " + url);
-    await page.goto(url, {waitUntil: 'domcontentloaded'});
-	await page.waitFor("//li[@data-item-type = 'tweet']");
+    await page.goto(url, {waitUntil: 'networkidle0'});
+	await page.waitFor("//article");
 	{
       var baseURL = page.url();
       baseURL = baseURL.substring(0, baseURL.lastIndexOf("/"));
@@ -135,29 +140,32 @@ async function saveRSS(url, destFN)
       
       console.log("operating on page: " + await page.title());
       
-      var pageTitle = await page.evaluate(() => {
-          return document.body.querySelector("h1[class ~= 'ProfileHeaderCard-name']").firstElementChild.text;
-        });
+      var pageTitle = await page.title();
+      pageTitle = pageTitle.substring(0, pageTitle.indexOf('(') - 1);
 
       var dst = fs.openSync(destFN, "w");
       var name = pageTitle;
-      var articles = await page.$x("//li[@data-item-type = 'tweet' and ../@class != 'activity-popup-users']");
-      var lastEntry;
+      var articles = await page.$x("//article");
       
       if (!articles) {
         console.log("Could not load articles\n");
         process.exit(1);
       }
       
-      var date = await page.evaluate(() => {
-        var d = document.body.querySelector("span[data-time]");
-        if (d)
-            d = d.getAttribute("data-time");
-        return d;
+      var lastEntry = await page.evaluate(() => {
+        var timeNodes = document.body.querySelectorAll("time");
+        var d = new Date(0);
+        
+        timeNodes.forEach(time => {
+			var t = new Date(time.getAttribute("datetime"));
+			
+			if (t > d)
+				d = t;
+		});
+
+        return JSON.stringify(d);
       });
-      if (date) {
-        lastEntry = new Date(1000 * date);
-      }
+      lastEntry = new Date(JSON.parse(lastEntry));
       
       await writeRSSHeader(dst, page, lastEntry);
       
@@ -171,16 +179,20 @@ async function saveRSS(url, destFN)
         var guid = undefined;
 
         var dto = await page.evaluate(article => {
-            var d = article.querySelector("span[data-time]");
+            var d = article.querySelector("time");
             if (d)
-                d = d.getAttribute("data-time");
+                d = d.getAttribute("datetime");
             return d;
         }, article);
         var articleUrl = await page.evaluate(article => {
-            var a = article.querySelector("a[class ~= 'js-permalink']");
-            if (a)
-                a = a.getAttribute("href");
-            return a;
+            var as = article.querySelectorAll("a[href *= 'status']");
+            if (as) {
+				as.forEach(a => {
+					if (!a.getAttribute("label"))
+						retval = a.getAttribute("href");
+				});
+			}
+            return retval;
         }, article);
                 
         if (articleUrl) {
@@ -195,98 +207,58 @@ async function saveRSS(url, destFN)
         title = name;
 
         if (dto)
-          dt = new Date(1000 * dto);
+          dt = new Date(dto);
         else {
-          // look ahead to find an older article that does have a date set
-		  // FIXME
-		  /*
-          for (var olderIdx = articleIdx + 1; olderIdx < articles.length; olderIdx++) {
-            dto = article.querySelector("span[data-time]");
-            if (dto)
-              break;
-          }
-		  */
-		  	console.log("FIXME: NO DATE");
-          
-          if (dto)
-            dt = new Date(1000 * dto);
-          else
-            dt = lastEntry;
+		  dt = lastEntry;
         }
         
         // read content
-	var userContent = await page.evaluate(article => {
-            return article.querySelector("[class ~= 'tweet']");
-        }, article);
+		var userContent = article;
 
         if (userContent) {
-            var txtHTML = await page.evaluate(article => {
-                var t = article.querySelector("[class ~= 'tweet-text']");
+            var txtHTML = await page.evaluate(t => {
                 if (t)
                     t = t.innerHTML;
                 return t;
             }, article);
-            var txt = await page.evaluate(article => {
-                var t = article.querySelector("[class ~= 'tweet-text']");
-                if (t)
+            var txt = await page.evaluate(t => {
+				var lang = t.querySelector("div[lang]");
+				
+                if (lang)
+					t = lang.textContent;
+                else
                     t = t.textContent;
                 return t;
             }, article);
 
-            var pic = await page.evaluate(article => {
-                var p = article.querySelector("[data-element-context = 'platform_photo_card']");
-                if (p) {
-                    var inner = p.querySelector("img");
-                    if (inner)
-                        p = inner;
-                }
-                return p ? p.outerHTML : null;
-            }, article);
-
             var isRT = await page.evaluate(article => {
-                return article.querySelector("[class ~= 'js-retweet-text']");
+				var retval = false;
+				article.querySelectorAll("a").forEach(a => {
+					retval |= a.textContent.includes("Retweeted");
+				});
+				
+                return retval;
             }, article);
-            var isQT = await page.evaluate(article => {
-                return article.querySelector("[class ~= 'QuoteTweet-authorAndText']");
-            }, article);
-            var rt = "";
                     
             if (isRT) {
-               rt = await page.evaluate(article => {
-                   var r = article.querySelector("[class ~= 'username']");
-                   if (r)
-                       r = "RT " + r.textContent + ": ";
-                   return r;
-               }, article);
+               rt = " RT";
             }
+            else
+				rt = "";
 
-          content = "<div>" + rt + txt + "</div>";
-
-          if (pic)
-            content += "<div>" + pic + "</div>";
-
-          if (isQT) {
-            var qt = await page.evaluate(article => {
-                return article.querySelector("[class ~= 'QuoteTweet-text']");
-            }, article);
-
-            if (qt)
-              content += ("<div>" + qt.textContent + "</div>");
-          }
-
-          title += ": " + rt + txt;
+          title += rt + ": " + txt;
         }
         
         // use content hash key as GUID if nothing else unique is available
         if (!guid)
           guid = hash(baseURL + title + dt);
         
-        writeItem(dst, articleUrl, dt, title, content, guid);
+        writeItem(dst, articleUrl, dt, title, txtHTML, guid);
       }
       
       writeRSSFooter(dst);
 
-      fs.close(dst);
+      fs.close(dst, fu => {});
       process.exit(0);
     }
   }

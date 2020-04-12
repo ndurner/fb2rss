@@ -121,7 +121,7 @@ async function saveRSS(url, destFN)
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     
-    await page.setViewport({width: 1920, height: 1050});
+    await page.setViewport({width: 6016, height: 3384});
     
     console.log("opening " + url);
     await page.goto(url, {waitUntil: 'domcontentloaded'});
