@@ -51,7 +51,8 @@ async function writeRSSHeader(dst, page, dt)
 {
   try {
     var desc = await page.evaluate(() => {
-  return document.querySelector("div[data-testid='UserDescription']").textContent;
+        var descNode = document.querySelector("div[data-testid='UserDescription']");
+        return descNode ? descNode.textContent : "";
       });  
     
     fs.writeSync(dst,
