@@ -180,7 +180,7 @@ async function saveRSS(url, destFN)
 	if (articleUrl.substring(0, 1) == "/")
 	  articleUrl = baseURL + articleUrl;
 	  
-	guid = articleUrl;
+	guid = articleUrl.substring(0, articleUrl.indexOf("?"));
       }
       else
 	articleUrl = url;
