@@ -186,7 +186,7 @@ async function saveRSS(url, destFN)
             return d;
         }, article);
         var articleUrl = await page.evaluate(article => {
-            var as = article.querySelectorAll("a[href *= 'status']");
+          var as = article.querySelectorAll("a[href *= 'status'][dir = 'ltr']");
             if (as) {
 				as.forEach(a => {
 					if (!a.getAttribute("label"))
